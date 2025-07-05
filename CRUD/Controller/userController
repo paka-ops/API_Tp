@@ -1,0 +1,88 @@
+const User = require('../Models/User');
+const { generatedToken, refreshToken} = require('../utility/security')
+const register = async(req,res) =>{
+    const{email,password} = req.body;
+    
+    try{
+        const user = await User.create({email, password});
+        res.status(201).json({"message" : 'user registered successully',user});
+    }catch(error){
+        res.status(500).json({"Message" : "registration failed" + error.message});
+    }
+}
+const login = async (req,res)=>{
+    const{email,password} = req.body;
+    // const token = req.headers.authorization.split('')[1];
+    // if(!token){
+    //     return res.status(403).json({"message" :'Token is required'});
+    
+    // }
+    // const decoded = jwt.verify(token,process.env.JWT_SECRET);
+    // console.log("Decoded",decoded)
+    try{
+        const user = await User.findOne({email});
+        if(!user){
+            res.status(500).json({"Message" : "Login failed"});
+        }else{
+            if(User.findOne({email})){
+                
+                const token = generatedToken(user,user.role,user.isActive);
+                
+                const refToken = refreshToken(user);
+                console.log(" refresh token : " + refToken)
+                user.isActive = true
+                user.refreshToken = refToken
+                await user.save();
+                res.status(201).json({"message" : 'Login sucessfull',user,token});
+                
+            }else{
+                res.status(500).json({"Message" : "login Failed"});
+            }
+            
+            
+        }
+
+    }catch(error){
+        res.status(500).json({"Message" : "login  failed " + error.message});
+    }
+};
+const getAllUsers = async (req,res)=>{
+    const data = req.body;
+    console.log(data.adminId);
+    
+    if(!data){
+        res.status(400).send({"Message":"Admin token is required"});    
+    }
+    const user = await User.findById(data.adminId);
+    if(user.role !=='admin' || user.role !== 'superadmin'){
+        return res.status(401).json({"Message":"Your have not permission"});
+    }else{
+        const users =  User.find();
+        return res.status(200).json({"message":"All users list ",users})
+    }
+}
+const updateUser = async(req,res) => {
+    const {id} = req.params;
+    const data = req.body;
+    const user= await User.findByIdAndUpdate(id,data,{new: true});
+    if(user){
+        return res.status(201).send(user)
+    }else{
+        return res.status(401).send({"message" : "l' element n' est pas trouvé "});
+    }
+}
+const getUserById = async(req,res)=>{
+    const id = req.params.id;
+    try{
+        const user = await User.findById(id);
+        if(!user){
+            return res.status(404).json({'message' : "element not fond"});
+        }else{
+            return res.status(200).send(user);
+        }
+    }catch(error){
+        return res.status(404).json({'message error' : "" + error});
+    }
+
+}
+module.exports ={register,login,getAllUsers,updateUser,getUserById}
