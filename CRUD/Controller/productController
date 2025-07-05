@@ -58,29 +58,29 @@ const insertManyProducts = async (req,res)=>{
 const getAllProducts = async (req,res)=>{
     
 
-    // const tokenHeader  = req.headers.authorization;
-    // console.log("header token " + tokenHeader)
-    // if(!tokenHeader){
-    //     return res.status(403).json("message: 'Token is required'");
+    const tokenHeader  = req.headers.authorization;
+    console.log("header token " + tokenHeader)
+    if(!tokenHeader){
+        return res.status(403).json("message: 'Token is required'");
 
-    // }
+    }
 
-    // const token_list = tokenHeader.split(' ');
-    // if(token_list[0]!== ('Bearer')){
-    //     return res.status(403).json({"message" : "token should be Bearer"})
-    // }
-    // const token = token_list[1];
-    // if(!token){
-    //     return res.status(403).json({"message" :'Token is required'});
+    const token_list = tokenHeader.split(' ');
+    if(token_list[0]!== ('Bearer')){
+        return res.status(403).json({"message" : "token should be Bearer"})
+    }
+    const token = token_list[1];
+    if(!token){
+        return res.status(403).json({"message" :'Token is required'});
     
-    // }
-    // try{
-    //     const decoded = jwt.verify(token,process.env.JWT_SECRET);
-    //     console.log("Decoded",decoded)
-    // }catch(error){
-    //     console.log(error);
-    //     return res.status(400).send({"message" : error})
-    // }
+    }
+    try{
+        const decoded = jwt.verify(token,process.env.JWT_SECRET);
+        console.log("Decoded",decoded)
+    }catch(error){
+        console.log(error);
+        return res.status(400).send({"message" : error})
+    }
 
     try{
         const products =  await Product.find();
@@ -108,32 +108,32 @@ const getAllProductsByUserId = async (req,res)=>{
             return res.status(404).json({'message error' : "" + error});
         }
 
-    // const tokenHeader  = req.headers.authorization;
-    // console.log("header token " + tokenHeader)
-    // if(!tokenHeader){
-    //     return res.status(403).json("message: 'Token is required'");
+    const tokenHeader  = req.headers.authorization;
+    console.log("header token " + tokenHeader)
+    if(!tokenHeader){
+        return res.status(403).json("message: 'Token is required'");
 
-    // }
+    }
 
-    // const token_list = tokenHeader.split(' ');
-    // if(token_list[0]!== ('Bearer')){
-    //     return res.status(403).json({"message" : "token should be Bearer"})
-    // }
+    const token_list = tokenHeader.split(' ');
+    if(token_list[0]!== ('Bearer')){
+        return res.status(403).json({"message" : "token should be Bearer"})
+    }
 
-    // const token = token_list[1];
-    // if(!token){
-    //     return res.status(403).json({"message" :'Token is required'});
+    const token = token_list[1];
+    if(!token){
+        return res.status(403).json({"message" :'Token is required'});
     
-    // }
-    // try{
-    //     const decoded = jwt.verify(token,process.env.JWT_SECRET);
-    //     if(decoded.id !== user_id){
-    //         return res.status(403).json({"message" : 'token is required'})
-    //     }
-    //     console.log("Decoded",decoded)
-    // }catch(error){
-    //     return res.status(405).send({"message" : error})
-    // }
+    }
+    try{
+        const decoded = jwt.verify(token,process.env.JWT_SECRET);
+        if(decoded.id !== user_id){
+            return res.status(403).json({"message" : 'token is required'})
+        }
+        console.log("Decoded",decoded)
+    }catch(error){
+        return res.status(405).send({"message" : error})
+    }
 
     try{
         const products =  await Product.find();

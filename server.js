@@ -26,17 +26,7 @@ connectDb();
 app.listen(5000,()=>{
     console.log("server start on " + 5000)
 })
-const swaggerSpec = swaggerJsdoc({
-  definition: {
-    openapi: "3.0.0",
-    info: {
-      title: "Mon API avec Swagger",
-      version: "1.0.0",
-      description: "Documentation générée avec Swagger UI"
-    }
-  },
-  apis: ["./routes/*.js"] // ⬅️ Chemin vers tes fichiers avec annotations Swagger
-});
+
 
 app.use( productRoutes);
 app.use('/users',usersRoutes)
